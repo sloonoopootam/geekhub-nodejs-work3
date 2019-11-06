@@ -2,9 +2,15 @@ const fjords = (array) => {
     const blueWaterBlocks = [];
     array.map((a, i) => {
         const twinPeaks = [a, a];
-        array.map((b, n) => (b > twinPeaks[0] && n < i) ? twinPeaks[0] = b : (b > twinPeaks[1] && n > i) ? twinPeaks[1] = b : 0);
+        array.map((b, n) => {
+            if (b > twinPeaks[0] && n < i) {
+                return twinPeaks[0] = b;
+            } else if (b > twinPeaks[1] && n > i) {
+                return twinPeaks[1] = b;
+            }
+        });
         const depthWater = twinPeaks.sort((a, b) => a - b)[0];
-        if (depthWater > a) return blueWaterBlocks.push(depthWater - a);
+        if (depthWater > a) {return blueWaterBlocks.push(depthWater - a)}
     });
     return blueWaterBlocks.reduce((a, b) => a + b, 0);
 };
