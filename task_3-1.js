@@ -1,35 +1,36 @@
-/* 3.1 Создать новые методы для всех массивов (и вставить туда логгер с занятия 1, для 1000 повторений,
-что бы показывал статистику для всех повторений):
-* а) myForEach - тот же самый forEach
-* б) myMap - тот же самый map
-* в) mySort - тот же самый sort
-* г) myFilter
-* д) myPush  */
+/* 3.1 Create new methods for the all arrays (and insert the logger there, from lesson 1, for 1000 repetitions -
+        to show statistics for all that repetitions):
+** a) myForEach - that same Array.forEach(),
+** b) myMap - that same Array.map(),
+** c) mySort - that same Array.sort(),
+** d) myFilter - that same Array.filter(),
+** e) myPush  - that same Array.push()
+*/
 
 const timer = require('./timer');
 
 const exampleArray = Array(100)
     .fill()
-    .map (_ => Math.round(Math.random() * 1000));
+    .map(_ => Math.round(Math.random() * 1000));
 
 Array.prototype.myForEach = function (callback, thisArg) {
-    let array = thisArg || this;
-    let length = array.length;
+    const array = thisArg || this;
+    const length = array.length;
     for (let i = 0; i < length; i++) {
         callback(array[i], i, array);
     }
 };
 
 timer.time('myForEach', 'wrapper');
-    exampleArray.myForEach(a => console.table(a));
+exampleArray.myForEach(a => console.table(a));
 timer.timeEnd('myForEach', 'wrapper');
 
 Array.prototype.myMap = function (callback, thisArg) {
-    let array = thisArg || this;
-    let length = array.length;
-    let results = [];
+    const array = thisArg || this;
+    const length = array.length;
+    const results = [];
     for (let i = 0; i < length; i++) {
-        results.push(callback.call(array[i], i, array));
+        results.push(callback.call(array, array[i]));
     }
     return results;
 };
@@ -41,8 +42,8 @@ for (let i = 0; i <= 1000; i++) {
 timer.timeEnd('myMap', 'wrapper');
 
 Array.prototype.myFilter = function (callback, thisArg) {
-    let array = thisArg || this;
-    let length = array.length;
+    const array = thisArg || this;
+    const length = array.length;
     const results = [];
     for (let i = 0; i < length; i++) {
         callback.call(array[i], i, array);
@@ -59,13 +60,18 @@ for (let i = 0; i <= 1000; i++) {
 }
 timer.timeEnd('myFilter', 'wrapper');
 
-Array.prototype.mySort = function () {
-    let array = this;
-    let results = [];
-    for (; array.length; ) {
-        results.push(array.splice(array.indexOf(Math.min(...array)),1)[0]);
+Array.prototype.mySort = function (callback, thisArg) {
+    const array = thisArg || this;
+    const cb = (callback && typeof callback === 'function') ? callback : (a, b) => String(a) > String(b);
+    const length = array.length;
+    for (let i = 0; i < length; i++) {
+        for (let j = 0; j < length - i - 1; j++) {
+            if (cb(array[j], array[j + 1])) {
+                [array[j], array[j + 1]] = [array[j + 1], array[j]]
+            }
+        }
     }
-    return results;
+    return array;
 };
 
 timer.time('mySort', 'wrapper');
@@ -73,8 +79,8 @@ console.log(exampleArray.mySort());
 timer.timeEnd('mySort', 'wrapper');
 
 Array.prototype.myPush = function () {
-    let array = this;
-    let length = arguments.length;
+    const array = this;
+    const length = arguments.length;
     for (let i = 0; i < length; i++) {
         array[array.length] = arguments[i];
     }
